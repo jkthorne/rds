@@ -1,3 +1,4 @@
+require "./linked_list"
 require "./ring_buffer"
 
 module RDS
