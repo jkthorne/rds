@@ -65,4 +65,22 @@ describe RingBuffer do
       end
     end
   end
+
+  context "#read" do
+    it "reads a value from the buffer" do
+      ring = RingBuffer(Int32).new(3)
+
+      ring.write(1)
+
+      ring.read.should eq 1
+    end
+
+    it "raises if there is no more values to read" do
+      ring = RingBuffer(Int32).new(3)
+
+      expect_raises RingBuffer::ReaderWriterColision, "reader has not caught up to writer" do
+        ring.read
+      end
+    end
+  end
 end

@@ -1,12 +1,10 @@
 class RingBuffer(T)
-  include Indexable(T)
-
   @size : Int32
   @buffer : Pointer(T)
   @writer : Int32 = 0
   @reader : Int32 = 0
 
-  def initialize(@size : Int32 = 64)
+  def initialize(@size : Int32 = 16)
     if @size < 0
       raise ArgumentError.new("Negative array size: #{@size}")
     end
@@ -50,11 +48,6 @@ class RingBuffer(T)
       count = count + 1
     end
     io << ")"
-  end
-
-  @[AlwaysInline]
-  private def unsafe_fetch(index : Int)
-    @buffer[index]
   end
 
   class ReaderWriterColision < Exception
