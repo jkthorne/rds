@@ -43,7 +43,7 @@ class RingBuffer(T)
       io << "W" if count == @writer
       io << "R" if count == @reader
       io << "->" if count == @writer || count == @reader
-      
+
       @buffer[count].as(T).inspect(io)
       count = count + 1
     end

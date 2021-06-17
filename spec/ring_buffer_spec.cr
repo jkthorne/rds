@@ -50,7 +50,7 @@ describe RingBuffer do
       ring = RingBuffer(Int32).new(3)
 
       ring.write(1)
-      
+
       ring.read.should eq 1
     end
 

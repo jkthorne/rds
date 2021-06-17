@@ -42,7 +42,7 @@ describe LinkedList do
 
     it "#minmax" do
       list = build_basic_list
-      
+
       result = list.minmax
 
       result.map(&.value).should eq({1, 5})
