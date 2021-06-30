@@ -20,10 +20,6 @@ class LinkedList(T)
     ListIterator.new(self).each { |n| yield n }
   end
 
-  def tail
-    each.reduce(self) { |n| n }
-  end
-
   def append(value : T)
     value_node = {{@type}}.new(value)
     node = self
