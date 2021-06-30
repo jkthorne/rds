@@ -1,15 +1,11 @@
-module LinkedList(T)
-  macro included
-    include Enumerable({{@type}})
+class LinkedList(T)
+  include Enumerable(T)
+  include Comparable(LinkedList)
 
-    getter next : {{@type}} | Nil
-    @next : {{@type}} | Nil
-  end
+  property next : self | Nil
+  property value : T
 
-  getter value : T
-  @next : T | Nil
-
-  def initialize(@value : T, @next = nil)
+  def initialize(@value : T, @next)
   end
 
   def <=>(other)
@@ -24,11 +20,21 @@ module LinkedList(T)
     ListIterator.new(self).each { |n| yield n }
   end
 
-  def insert(value : T) : self
-    new_next = {{@type}}.new(value)
-    @next = new_next
-    new_next
+  def tail
+    each.reduce(self) { |n| n }
   end
+
+  # def append(value : T)
+  #   new_next = T.new(value)
+  #   last.next = new_next
+  #   new_next
+  # end
+
+  # def insert(value : T)
+  #   new_next = T.new(value)
+  #   tail.next = new_next
+  #   new_next
+  # end
 
   def unsafe_fetch(n)
     node = self
@@ -38,26 +44,28 @@ module LinkedList(T)
     node
   end
 
-  private class ListIterator(T)
-    include Iterator(T)
+  private class ListIterator(L)
+    include Iterator(L)
 
-    @at_start = true
+    @node : L | Nil
+    @started = true
 
-    def initialize(@node : T | Nil)
+    def initialize(@node : L)
     end
 
     def next
       node = @node
       return stop if node.nil?
 
-      if @at_start
-        @at_start = false
-        return node
+      started = @started
+      if started
+        @started = false
+        return node.value
       else
         node = node.next
         if node
           @node = node
-          return node
+          return node.value
         end
         stop
       end
