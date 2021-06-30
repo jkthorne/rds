@@ -1,11 +1,11 @@
 class LinkedList(T)
-  include Enumerable(T)
+  include Indexable(T)
   include Comparable(LinkedList)
 
   property next : self | Nil
   property value : T
 
-  def initialize(@value : T, @next)
+  def initialize(@value : T, @next = nil)
   end
 
   def <=>(other)
@@ -24,24 +24,35 @@ class LinkedList(T)
     each.reduce(self) { |n| n }
   end
 
-  # def append(value : T)
-  #   new_next = T.new(value)
-  #   last.next = new_next
-  #   new_next
-  # end
-
-  # def insert(value : T)
-  #   new_next = T.new(value)
-  #   tail.next = new_next
-  #   new_next
-  # end
-
-  def unsafe_fetch(n)
+  def append(value : T)
+    value_node = {{@type}}.new(value)
     node = self
-    n.times do |i|
-      node = node.try &.next
+
+    while next_node = node.try &.next
+      node = next_node
     end
-    node
+    node.next = value_node
+
+    value_node
+  end
+
+  def insert(value : T)
+    new_next = T.new(value, self.next)
+    self.next = new_next
+    new_next
+  end
+
+  def unsafe_fetch(n) : T
+    node : self = self
+    n.times do |i|
+      next_node = node.next
+      if next_node.nil?
+        raise IndexError.new
+      else
+        node = next_node
+      end
+    end
+    node.value
   end
 
   private class ListIterator(L)

@@ -54,4 +54,37 @@ describe LinkedList do
       result.map(&.itself).should eq({1, 5})
     end
   end
+
+  context "Indexable" do
+    context "#[]" do
+      it "returns a value with a positive index" do
+        list = build_basic_list
+
+        list[0].should eq 1
+        list[1].should eq 2
+        list[2].should eq 3
+      end
+
+      it "returns a value with a negative index" do
+        list = build_basic_list
+
+        list[-1].should eq list.last
+        list[-2].should eq 4
+        list[-3].should eq 3
+        list[-4].should eq 2
+      end
+    end
+  end
+
+  context "#append" do
+    it "adds a value to the end of the list" do
+      list = build_basic_list
+      expected_value = 10
+
+      list.append(expected_value)
+
+      list.first.should_not eq expected_value
+      list.last.should eq expected_value
+    end
+  end
 end
