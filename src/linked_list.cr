@@ -20,6 +20,17 @@ class LinkedList(T)
     ListIterator.new(self).each { |n| yield n }
   end
 
+  def size : Int32
+    count = 1
+    
+    node = self
+    while node = node.try &.next
+      count += 1
+    end
+
+    count
+  end
+
   def append(value : T)
     value_node = {{@type}}.new(value)
     node = self

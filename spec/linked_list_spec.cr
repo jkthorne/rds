@@ -26,6 +26,15 @@ describe LinkedList do
     end
   end
 
+  context "#size" do
+    it "returns the size of the list" do
+      build_basic_list(3).size.should eq 3
+      build_basic_list(10).size.should eq 10
+      build_basic_list(25).size.should eq 25
+    end
+    
+  end
+
   context "Iterator" do
     it "#each" do
       list = build_basic_list
