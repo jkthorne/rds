@@ -5,8 +5,6 @@ def build_list(count = 5)
   list = head
   (2..(count)).each do |i|
     list = list.next = LinkedList.new(i, nil)
-    # list.append(i)
-    # list = list.insert(i)
   end
   head
 end
