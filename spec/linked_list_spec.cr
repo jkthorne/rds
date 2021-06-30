@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-def build_basic_list(count = 5)
+def build_list(count = 5)
   head = LinkedList.new(1, nil)
   list = head
   (2..(count)).each do |i|
@@ -28,16 +28,16 @@ describe LinkedList do
 
   context "#size" do
     it "returns the size of the list" do
-      build_basic_list(3).size.should eq 3
-      build_basic_list(10).size.should eq 10
-      build_basic_list(25).size.should eq 25
+      build_list(3).size.should eq 3
+      build_list(10).size.should eq 10
+      build_list(25).size.should eq 25
     end
     
   end
 
   context "Iterator" do
     it "#each" do
-      list = build_basic_list
+      list = build_list
       values = [] of Int32
 
       list.each { |v| values << v }
@@ -48,7 +48,7 @@ describe LinkedList do
 
   context "Enumerable" do
     it "#map" do
-      list = build_basic_list
+      list = build_list
 
       result = list.map { |v| v * 10 }
 
@@ -56,7 +56,7 @@ describe LinkedList do
     end
 
     it "#minmax" do
-      list = build_basic_list
+      list = build_list
 
       result = list.minmax
 
@@ -67,7 +67,7 @@ describe LinkedList do
   context "Indexable" do
     context "#[]" do
       it "returns a value with a positive index" do
-        list = build_basic_list
+        list = build_list
 
         list[0].should eq 1
         list[1].should eq 2
@@ -75,7 +75,7 @@ describe LinkedList do
       end
 
       it "returns a value with a negative index" do
-        list = build_basic_list
+        list = build_list
 
         list[-1].should eq list.last
         list[-2].should eq 4
@@ -87,7 +87,7 @@ describe LinkedList do
 
   context "#append" do
     it "adds a value to the end of the list" do
-      list = build_basic_list
+      list = build_list
       expected_value = 10
 
       list.append(expected_value)
