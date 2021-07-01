@@ -1,26 +1,23 @@
 require "./spec_helper"
 
 def build_list(count = 5)
-  head = LinkedList.new(1, nil)
-  list = head
-  (2..(count)).each do |i|
-    list = list.next = LinkedList.new(i, nil)
-  end
-  head
+  list = LinkedList.new(1)
+  (2..(count)).each{ |i| list << i }
+  list
 end
 
 describe LinkedList do
   context "#<=>" do
     it "returns 0 for match" do
-      (LinkedList.new(1, nil) <=> LinkedList.new(1, nil)).should eq 0
+      (LinkedList.new(1) <=> LinkedList.new(1)).should eq 0
     end
 
     it "returns -1 for left side less then" do
-      (LinkedList.new(1, nil) <=> LinkedList.new(2, nil)).should eq -1
+      (LinkedList.new(1) <=> LinkedList.new(2)).should eq -1
     end
 
     it "returns 1 for right side less then" do
-      (LinkedList.new(2, nil) <=> LinkedList.new(1, nil)).should eq 1
+      (LinkedList.new(2) <=> LinkedList.new(1)).should eq 1
     end
   end
 
@@ -30,7 +27,6 @@ describe LinkedList do
       build_list(10).size.should eq 10
       build_list(25).size.should eq 25
     end
-    
   end
 
   context "Iterator" do
@@ -83,12 +79,12 @@ describe LinkedList do
     end
   end
 
-  context "#append" do
+  context "#<<" do
     it "adds a value to the end of the list" do
       list = build_list
       expected_value = 10
 
-      list.append(expected_value)
+      list << expected_value
 
       list.first.should_not eq expected_value
       list.last.should eq expected_value

@@ -2,28 +2,43 @@ class LinkedList(T)
   include Indexable(T)
   include Comparable(LinkedList)
 
-  property next : self | Nil
-  property value : T
+  class Node(T)
+    property next : self | Nil
+    property value : T
 
-  def initialize(@value : T, @next = nil)
+    def initialize(@value : T, @next = nil)
+    end  
+  end
+
+  getter root : Node(T)
+
+  def initialize(value : T)
+    @root = Node.new(value)
   end
 
   def <=>(other)
-    value <=> other.try &.value
+    min_size = Math.min(size, other.size)
+
+    0.upto(min_size - 1) do |i|
+      n = self[i] <=> other[i]
+      return n if n != 0
+    end
+
+    size <=> other.size
   end
 
   def each
-    ListIterator.new(self)
+    ListIterator.new(root)
   end
 
   def each
-    ListIterator.new(self).each { |n| yield n }
+    ListIterator.new(root).each { |n| yield n }
   end
 
   def size : Int32
     count = 1
-    
-    node = self
+    node = root
+
     while node = node.try &.next
       count += 1
     end
@@ -31,44 +46,40 @@ class LinkedList(T)
     count
   end
 
-  def append(value : T)
-    value_node = {{@type}}.new(value)
-    node = self
+  def <<(value : T)
+    node = root
 
     while next_node = node.try &.next
       node = next_node
     end
-    node.next = value_node
+    node.next = Node.new(value)
 
-    value_node
-  end
-
-  def insert(value : T)
-    new_next = T.new(value, self.next)
-    self.next = new_next
-    new_next
+    self
   end
 
   def unsafe_fetch(n) : T
-    node : self = self
+    node : Node(T) = root
+
     n.times do |i|
       next_node = node.next
+
       if next_node.nil?
         raise IndexError.new
       else
         node = next_node
       end
     end
+
     node.value
   end
 
-  private class ListIterator(L)
-    include Iterator(L)
+  private class ListIterator(N)
+    include Iterator(N)
 
-    @node : L | Nil
+    @node : N | Nil
     @started = true
 
-    def initialize(@node : L)
+    def initialize(@node : N)
     end
 
     def next
