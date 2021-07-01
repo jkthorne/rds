@@ -1,3 +1,4 @@
+require "./binary_tree"
 require "./linked_list"
 require "./ring_buffer"
 
