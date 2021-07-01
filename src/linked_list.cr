@@ -57,6 +57,8 @@ class LinkedList(T)
     self
   end
 
+  # TODO: add #insert_at and #delete_at
+
   def unsafe_fetch(n) : T
     node : Node(T) = root
 

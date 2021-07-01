@@ -50,6 +50,8 @@ class BinaryTree(T)
     self
   end
 
+  # TODO: add #insert_at and #delete_at
+
   def unsafe_fetch(n) : T
     iter = each
     value = iter.next
