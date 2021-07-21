@@ -7,7 +7,7 @@ class LinkedList(T)
     property value : T
 
     def initialize(@value : T, @next = nil)
-    end  
+    end
   end
 
   getter root : Node(T)

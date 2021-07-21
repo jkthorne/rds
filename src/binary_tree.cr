@@ -94,7 +94,7 @@ class BinaryTree(T)
       if @started
         node = @stack.last.right
         @stack.pop
-         
+
         while !node.nil?
           @stack.push(node)
           node = node.left
@@ -102,7 +102,7 @@ class BinaryTree(T)
       else
         @started = true
       end
-  
+
       node = @stack.last?
       node ? node.value : stop
     end
@@ -125,7 +125,7 @@ class BinaryTree(T)
       if @started
         node = @stack.last.right
         @stack.pop
-         
+
         while !node.nil?
           @stack.push(node)
           node = node.left
@@ -133,7 +133,7 @@ class BinaryTree(T)
       else
         @started = true
       end
-  
+
       node = @stack.last?
       node ? node : stop
     end

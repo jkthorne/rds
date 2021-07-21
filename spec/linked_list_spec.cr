@@ -2,7 +2,7 @@ require "./spec_helper"
 
 def build_list(count = 5)
   list = LinkedList.new(1)
-  (2..(count)).each{ |i| list << i }
+  (2..(count)).each { |i| list << i }
   list
 end
 
