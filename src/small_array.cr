@@ -1,7 +1,11 @@
-struct SmallArray(T, CAPACITY)
+struct SmallArray(T)
   include Indexable(T)
+  include Comparable(SmallArray)
+
+  CAPACITY = 8
 
   @size = 0
+  @buffer : StaticArray(T?, CAPACITY)
 
   # Creates a new `SmallArray` with the given *args*. The type of the
   # small array will be the union of the type of the given *args*,
@@ -14,7 +18,7 @@ struct SmallArray(T, CAPACITY)
   # ary.class # => SmallArray(Char | Int32, 2)
   # ```
   macro [](*args)
-    %array = uninitialized SmallArray(typeof({{*args}}), {{args.size}})
+    %array = uninitialized SmallArray(typeof({{*args}}))
     {% for arg, i in args %}
       %array.to_unsafe[{{i}}] = {{arg}}
     {% end %}
@@ -46,8 +50,10 @@ struct SmallArray(T, CAPACITY)
     new { value }
   end
 
-  def initialize
-    @size = 0
+  def initialize(*args)
+    #TODO: raise args
+    @size = args.size
+    @buffer = StaticArray(T?, CAPACITY).new { |i| args[i]? }
   end
 
   # Equality. Returns `true` if each element in `self` is equal to each
@@ -75,7 +81,7 @@ struct SmallArray(T, CAPACITY)
 
   @[AlwaysInline]
   def unsafe_fetch(index : Int)
-    to_unsafe[index]
+    to_unsafe[index].as(T)
   end
 
   # Sets the given value at the given *index*.
@@ -139,8 +145,8 @@ struct SmallArray(T, CAPACITY)
   # ary = SmallArray(Int32, 3).new(42)
   # ary.to_unsafe[0] # => 42
   # ```
-  def to_unsafe : Pointer(T)
-    pointerof(@buffer)
+  def to_unsafe
+    @buffer
   end
 
   # Appends a string representation of this small array to the given `IO`.
@@ -172,6 +178,11 @@ struct SmallArray(T, CAPACITY)
     array
   end
 
+  # :nodoc:
+  protected def size=(size : Int)
+    @size = size.to_i
+  end
+
   # Combined comparison operator.
   #
   # Returns `-1`, `0` or `1` depending on whether `self` is less than *other*, equals *other*
@@ -197,8 +208,19 @@ struct SmallArray(T, CAPACITY)
     size <=> other.size
   end
 
-  def <<(obj : T) : self
+  def <<(obj : T) : (self | Array(T))
+    # TODO: check to upgrade
+    @buffer[@size] = obj
     @size += 1
-    to_unsafe[@size] = obj
+    self
+  end
+
+  def push(obj : T) : (self | Array(T))
+    self.<<(obj)
+  end
+
+  # Optimized version of `Enumerable#map`.
+  def map(&block : T -> U) forall U
+    SmallArray(U).new { |i| yield self[i] }
   end
 end
