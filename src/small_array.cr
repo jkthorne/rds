@@ -51,7 +51,7 @@ struct SmallArray(T)
   end
 
   def initialize(*args)
-    #TODO: raise args
+    # TODO: raise args
     @size = args.size
     @buffer = StaticArray(T?, CAPACITY).new { |i| args[i]? }
   end
@@ -179,7 +179,7 @@ struct SmallArray(T)
   end
 
   # :nodoc:
-  protected def size=(size : Int)
+  def size=(size : Int)
     @size = size.to_i
   end
 
@@ -206,6 +206,73 @@ struct SmallArray(T)
       return n if n != 0
     end
     size <=> other.size
+  end
+
+  # Set intersection: returns a new `Array` containing elements common to `self`
+  # and *other*, excluding any duplicates. The order is preserved from `self`.
+  #
+  # ```
+  # SmallArray[1, 1, 3, 5] & SmallArray[1, 2, 3]               # => SmallArray[ 1, 3 ]
+  # SmallArray['a', 'b', 'b', 'z'] & SmallArray['a', 'b', 'c'] # => SmallArray[ 'a', 'b' ]
+  # ```
+  #
+  # See also: `#uniq`.
+  def &(other : SmallArray(U)) forall U
+    return SmallArray(T).new if self.empty? || other.empty?
+
+    ary = SmallArray(T).new
+    each do |elem|
+      ary << elem if !ary.includes?(elem) && other.includes?(elem)
+    end
+    ary
+  end
+
+  # Set union: returns a new `Array` by joining `self` with *other*, excluding
+  # any duplicates, and preserving the order from `self`.
+  #
+  # ```
+  # SmallArray["a", "b", "c"] | SmallArray["c", "d", "a"] # => SmallArray[ "a", "b", "c", "d" ]
+  # ```
+  #
+  # See also: `#uniq`.
+  def |(other : SmallArray(U)) forall U
+    ary = SmallArray(T | U).new
+    each do |elem|
+      ary << elem unless ary.includes?(elem)
+    end
+    other.each do |elem|
+      ary << elem unless ary.includes?(elem)
+    end
+    ary
+  end
+
+  # Concatenation. Returns a new `SmallArray` built by concatenating `self` and *other*.
+  # The type of the new array is the union of the types of both the original arrays.
+  #
+  # ```
+  # SmallArray[1, 2] + SmallArray["a"]  # => SmallArray[1,2,"a"] of (Int32 | String)
+  # SmallArray[1, 2] + SmallArray[2, 3] # => SmallArray[1,2,2,3]
+  # ```
+  def +(other : SmallArray(U)) forall U
+    ary = SmallArray(T | U).new
+    # TODO make this more performant
+    ary = ary | self
+    ary = ary | other
+    ary
+  end
+
+  # Difference. Returns a new `Array` that is a copy of `self`, removing any items
+  # that appear in *other*. The order of `self` is preserved.
+  #
+  # ```
+  # SmallArray[1, 2, 3] - SmallArray[2, 1] # => SmallArray[3]
+  # ```
+  def -(other : SmallArray(U)) forall U
+    ary = SmallArray(T).new
+    each do |elem|
+      ary << elem unless other.includes?(elem)
+    end
+    ary
   end
 
   def <<(obj : T) : (self | Array(T))
